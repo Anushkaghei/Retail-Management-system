@@ -12,11 +12,11 @@ root.configure (bg="turquoise")
 frame=tk.Frame(root).pack()
 dict={}
 l=[]
-#password=input("enter your mysql password :")
+password=input("enter your mysql password :")
 
 connection = pymysql.connect(host='localhost', 
                              user='root', 
-                             password="Gobbles#77",
+                             password=password,
                              database='online', charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor)
 try:
     cursor=connection.cursor()
