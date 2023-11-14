@@ -124,10 +124,10 @@ def create_and_use_database(cursor):
 # Database connection parameters
 host = "localhost"
 user = "root"
-#password=input("enter your mysql password :")
+password=input("enter your mysql password :")
 
 try:
-    connection = pymysql.connect(host=host, user=user, password="Gobbles#77")
+    connection = pymysql.connect(host=host, user=user, password=password)
 except pymysql.Error as e:
     print("Error")
     print(e)
