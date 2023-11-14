@@ -33,7 +33,7 @@ class OnlineShoppingAdminGUI:
         self.action_label = tk.Label(root, text="Select Action:")
         self.action_label.pack()
         self.action_var = tk.StringVar()
-        self.action_combobox = ttk.Combobox(root, textvariable=self.action_var, values=["Read", "Update", "Delete"])
+        self.action_combobox = ttk.Combobox(root, textvariable=self.action_var, values=["Read", "Update", "Delete", "Nested Query", "Join Query", "Aggregate Query"])
         self.action_combobox.pack()
 
         # Entry for new value
@@ -59,6 +59,16 @@ class OnlineShoppingAdminGUI:
         # Execute button
         self.execute_button = tk.Button(root, text="Execute", command=self.execute_action)
         self.execute_button.pack()
+
+        # Buttons for specific queries
+        self.nested_query_button = tk.Button(root, text="Nested Query", command=self.execute_nested_query)
+        self.nested_query_button.pack()
+
+        self.join_query_button = tk.Button(root, text="Join Query", command=self.execute_join_query)
+        self.join_query_button.pack()
+
+        self.aggregate_query_button = tk.Button(root, text="Aggregate Query", command=self.execute_aggregate_query)
+        self.aggregate_query_button.pack()
 
         # Event bindings
         self.action_var.trace_add("write", self.enable_disable_column_selection)
@@ -107,6 +117,19 @@ class OnlineShoppingAdminGUI:
             user_id = self.user_id_var.get()
             query = f"DELETE FROM {table} WHERE user_id = '{user_id}'"
             self.execute_query(query)
+        # Add more conditions for other actions if needed
+
+    def execute_nested_query(self):
+        query = "SELECT * FROM users WHERE User_ID IN (SELECT User_ID FROM orders)"
+        self.display_results(query)
+
+    def execute_join_query(self):
+        query = "SELECT cart_items.itemname, cart_items.price, cart_items.Size, products.itemcode, products.Price, products.Category_ID, products.Product_Description FROM cart_items INNER JOIN products ON cart_items.itemname = products.itemname"
+        self.display_results(query)
+
+    def execute_aggregate_query(self):
+        query = "SELECT SUM(products.Price) AS TotalPrice FROM cart_items INNER JOIN products ON cart_items.itemname = products.itemname"
+        self.display_results(query)
 
     def execute_query(self, query):
         # Clear previous results
