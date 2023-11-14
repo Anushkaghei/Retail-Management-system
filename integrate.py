@@ -2,6 +2,7 @@ import tkinter as tk
 import pymysql
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import datetime
 
 pay=[]
 gl=[]#graph list
@@ -12,32 +13,10 @@ root.configure (bg="turquoise")
 frame=tk.Frame(root).pack()
 dict={}
 l=[]
-
-def administrator():
-    while(True):
-        ch=int(input("""WELCOME TO SHOP MANAGEMENT SYSTEM !
-                 1.DISPLAY ALL DETAILS OF PURCHASED ITEMS
-                 2.DELETE ITEM BASED ON ITEM CODE
-                 3.SEARCH FOR A RECORD
-                 4.EXIT\n
-                 ENTER YOUR CHOICE:"""))
-        if(ch==1):
-            ext.display()
-        elif(ch==2):
-            ext.delete()
-        elif(ch==3):
-            ext.search()
-        elif(ch==4):
-            print("Thank you for using my program !!")
-        else:
-            ("Invalid Input...")
-            
-        c=input("Do you wish to continue (y/n):")
-        if(c=="n" or c=="N"):
-            break   
-b=input("Do you wish to modify purchased records (y/n):")
+     
+b=input("Do you wish to modify records (y/n):")
 if(b=="Y" or b=="y"):
-    administrator()    
+    import admin    
     
 def insert():
     read_query="insert into products(itemname,price,category_id,product_description) values(%s,%s,%s,%s)"
@@ -70,7 +49,6 @@ tables['Payment_Info'] = """create table IF NOT EXISTS Payment_Info(
 
 tables['Orders'] = """create table IF NOT EXISTS Orders(
     Order_ID char(6), 
-    Payment_ID int,
     ETA date,
     primary key(Order_ID));"""
 
@@ -102,13 +80,13 @@ sub_category = category
 category = maincat
 
 '''
-# foreign_keys = [
+#foreign_keys = [
 #     """ ALTER TABLE Products ADD FOREIGN KEY (Category_ID) REFERENCES Categories(Category_ID);""",
-#     """ ALTER TABLE Orders ADD FOREIGN KEY (Payment_ID) REFERENCES Payment_Info(Payment_ID);""",
+  #   """ ALTER TABLE Orders ADD FOREIGN KEY (Payment_ID) REFERENCES Payment_Info(Payment_ID);""",
 #     #""" ALTER TABLE Orders ADD FOREIGN KEY (itemcode) REFERENCES Products(itemcode);""",
 #     """ ALTER TABLE Users ADD FOREIGN KEY (Previous_Orders) REFERENCES Orders(Order_ID);""",
 #     """ ALTER TABLE Users ADD FOREIGN KEY (Active_Orders) REFERENCES Orders(Order_ID);"""
-# ]
+#]
 
 def create_and_use_database(cursor):
     try:
@@ -164,13 +142,41 @@ import projectext as ext
 
 #concluding page
 
+
 def final():
     final = tk.Tk()
     final.geometry("500x500+0+0")
     final.config(bg="aqua")
     final.title("THANK YOU !!")
     
-    message= "Thank you for shopping with us \nYour order will be delivered shortly \n\nPLEASE DO VISIT US AGAIN "
+    
+    def get_next_order_id():
+        # Function to get the next order ID based on the current maximum order ID in the database
+        cursor.execute("SELECT MAX(Order_ID) FROM Orders")
+        result = cursor.fetchone()[0]
+        if result:
+            next_order_id = int(result[1:]) + 1
+        else:
+            next_order_id = 1
+        return f'O{next_order_id:03}'
+        
+    def insert_order(order_id, eta):
+        
+        # Function to insert values into the Orders table
+        insert_orders_query = f"""
+            INSERT INTO Orders(Order_ID, ETA)
+            VALUES('{order_id}', '{eta}');
+        """
+        cursor.execute(insert_orders_query)
+        connection.commit()
+        
+    current_date = datetime.datetime.now().date()
+    eta = current_date + datetime.timedelta(days=5)
+    eta_str = eta.strftime('%Y-%m-%d')
+    order_id= get_next_order_id()
+    insert_order(order_id,eta_str)
+    
+    message= "Thank you for shopping with us \nYour order will be delivered on,",eta_str,"\n\nPLEASE DO VISIT US AGAIN "
     msg = tk.Message(final, text = message)
     msg.config(bg='aqua', font=('times', 24, 'italic'))
     msg.pack()
@@ -365,13 +371,8 @@ def profile(name_entry, email_entry, mobile_entry, password_entry, address_entry
     cursor.execute(insert_query)
     connection.commit()
     print("new user inserted")
+    pay_method()
 
-# def profile(name,email,mobile,passw,address):
-#     read_query="insert into users(user_id,email,phone_number,password, address) values(%s,%s,%s,%s,%s)"
-#     values=(name.get(),email,mobile.get(),passw, address.get())
-#     cursor.execute(read_query,values)
-#     connection.commit()
-#     print("new user inserted")
     
 def payment():
     master = tk.Tk()
