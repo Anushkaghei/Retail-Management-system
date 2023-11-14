@@ -3,7 +3,6 @@ import pymysql
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-
 pay=[]
 gl=[]#graph list
 root=tk.Tk()
@@ -103,13 +102,13 @@ sub_category = category
 category = maincat
 
 '''
-foreign_keys = [
-    """ ALTER TABLE Products ADD FOREIGN KEY (Category_ID) REFERENCES Categories(Category_ID);""",
-    """ ALTER TABLE Orders ADD FOREIGN KEY (Payment_ID) REFERENCES Payment_Info(Payment_ID);""",
-    #""" ALTER TABLE Orders ADD FOREIGN KEY (itemcode) REFERENCES Products(itemcode);""",
-    """ ALTER TABLE Users ADD FOREIGN KEY (Previous_Orders) REFERENCES Orders(Order_ID);""",
-    """ ALTER TABLE Users ADD FOREIGN KEY (Active_Orders) REFERENCES Orders(Order_ID);"""
-]
+# foreign_keys = [
+#     """ ALTER TABLE Products ADD FOREIGN KEY (Category_ID) REFERENCES Categories(Category_ID);""",
+#     """ ALTER TABLE Orders ADD FOREIGN KEY (Payment_ID) REFERENCES Payment_Info(Payment_ID);""",
+#     #""" ALTER TABLE Orders ADD FOREIGN KEY (itemcode) REFERENCES Products(itemcode);""",
+#     """ ALTER TABLE Users ADD FOREIGN KEY (Previous_Orders) REFERENCES Orders(Order_ID);""",
+#     """ ALTER TABLE Users ADD FOREIGN KEY (Active_Orders) REFERENCES Orders(Order_ID);"""
+# ]
 
 def create_and_use_database(cursor):
     try:
@@ -124,10 +123,10 @@ def create_and_use_database(cursor):
 # Database connection parameters
 host = "localhost"
 user = "root"
-password=input("enter your mysql password :")
+#password=input("enter your mysql password :")
 
 try:
-    connection = pymysql.connect(host=host, user=user, password=password)
+    connection = pymysql.connect(host=host, user=user, password="Gobbles#77")
 except pymysql.Error as e:
     print("Error")
     print(e)
@@ -153,13 +152,13 @@ else:
                 print(err)
 
     #ALTER TABLE ADD FOREIGN KEY
-    for key in foreign_keys:
-        try:
-            cursor.execute(key)
-        except pymysql.Error as err:
-            print(err)
-        else:
-            print("OK")
+    # for key in foreign_keys:
+    #     try:
+    #         cursor.execute(key)
+    #     except pymysql.Error as err:
+    #         print(err)
+    #     else:
+    #         print("OK")
 
 import projectext as ext
 
@@ -351,54 +350,105 @@ def pay_method():
     root.mainloop()
 #input payment information
 
-def profile(name,email,mobile,passw,address):
-    read_query="insert into users(user_id,email,phone_number,password, address) values(%s,%s,%s,%s,%s)"
-    values=(name,email,mobile,passw, address)
-    cursor.execute(read_query,values)
-    connection.commit()
-    print("new record inserted")
+def profile(name_entry, email_entry, mobile_entry, password_entry, address_entry):
+    # Function to insert user details into the Users table
+    user_id = name_entry.get()
+    email = email_entry.get()
+    mobile = mobile_entry.get()
+    password = " "
+    address = address_entry.get()
 
+    insert_query = f"""
+        INSERT INTO Users(User_ID, Email, Phone_Number, Password, Address)
+        VALUES('{user_id}', '{email}', '{mobile}', '{password}', '{address}');
+    """
+    cursor.execute(insert_query)
+    connection.commit()
+    print("new user inserted")
+
+# def profile(name,email,mobile,passw,address):
+#     read_query="insert into users(user_id,email,phone_number,password, address) values(%s,%s,%s,%s,%s)"
+#     values=(name.get(),email,mobile.get(),passw, address.get())
+#     cursor.execute(read_query,values)
+#     connection.commit()
+#     print("new user inserted")
+    
 def payment():
     master = tk.Tk()
     master.geometry("500x500+0+0")
     master.config(bg="spring green")
     master.title("PLEASE ENTER YOUR DETAILS")
     
-    a=sum(l)
+    a = sum(l)
     print(l)
     print(a)
- 
-    whatever="Total amount to be paid:",a
-    tk.Label(master,
-             text=whatever).grid(row=0)
+
+    whatever = "Total amount to be paid:", a
+    tk.Label(master, text=whatever).grid(row=0)
     
-    tk.Label(master,
-             text="name").grid(row=1)
-    
-    tk.Label(master,
-             text="mobile number").grid(row=2)
-    
-    tk.Label(master,
-             text="address").grid(row=3)
+    tk.Label(master, text="name").grid(row=1)
+    tk.Label(master, text="email").grid(row=2)  # Add email label
+    tk.Label(master, text="mobile number").grid(row=3)  # Shifted down to make room for email
+    tk.Label(master, text="address").grid(row=4)  # Shifted down to make room for email
     
     name = tk.Entry(master)
+    email = tk.Entry(master)  # Add email entry
     mobile = tk.Entry(master)
     address = tk.Entry(master)
     
     name.grid(row=1, column=1)
-    mobile.grid(row=2, column=1)
-    address.grid(row=3, column=1)
+    email.grid(row=2, column=1)  # Place email entry in the second column
+    mobile.grid(row=3, column=1)
+    address.grid(row=4, column=1)
     
-    profile(name," ",mobile," ",address)
+    # Assuming an empty string for the password for simplicity
+    go = tk.Button(master, text="next", highlightbackground="blue", command=lambda: profile(name, email, mobile, "", address))
+    go.grid(row=5, column=1)
+    
+    master.mainloop()
+
+
+# def payment():
+#     master = tk.Tk()
+#     master.geometry("500x500+0+0")
+#     master.config(bg="spring green")
+#     master.title("PLEASE ENTER YOUR DETAILS")
+    
+#     a=sum(l)
+#     print(l)
+#     print(a)
+ 
+#     whatever="Total amount to be paid:",a
+#     tk.Label(master,
+#              text=whatever).grid(row=0)
+    
+#     tk.Label(master,
+#              text="name").grid(row=1)
+    
+#     tk.Label(master,
+#              text="mobile number").grid(row=2)
+    
+#     tk.Label(master,
+#              text="address").grid(row=3)
+    
+#     name = tk.Entry(master)
+#     mobile = tk.Entry(master)
+#     address = tk.Entry(master)
+    
+#     name.grid(row=1, column=1)
+#     mobile.grid(row=2, column=1)
+#     address.grid(row=3, column=1)
+    
+#     profile(name," ",mobile," ",address)
     
     
-    go=tk.Button(master,
-                 text="next",
-                 highlightbackground="blue",
-                 command=pay_method)
+#     go=tk.Button(master,
+#                  text="next",
+#                  highlightbackground="blue",
+#                  command=pay_method)
     
-    go.grid(row=4, column=1)
-    master.mainloop()   
+#     go.grid(row=4, column=1)
+#     master.mainloop()   
  
 def categories(model,category,maincat,gender):
     read_query="insert into categories(category_id, sub_category, category, gender) values(%s,%s,%s,%s)"
@@ -618,22 +668,22 @@ def top2():
     
     frame3=tk.Frame(choice5,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["top1","top2","top3","top4","top5"]
-    strength=[gl.count("top1"),gl.count("top2"),gl.count("top3"),gl.count("top4"),gl.count("top5")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["top1","top2","top3","top4","top5"]
+    # strength=[gl.count("top1"),gl.count("top2"),gl.count("top3"),gl.count("top4"),gl.count("top5")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
     
     
     frame1.pack(fill="both",side="left")
@@ -733,22 +783,22 @@ def top3():
     
     frame3=tk.Frame(choice6,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["top1","top2","top3","top4","top5"]
-    strength=[gl.count("top1"),gl.count("top2"),gl.count("top3"),gl.count("top4"),gl.count("top5")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["top1","top2","top3","top4","top5"]
+    # strength=[gl.count("top1"),gl.count("top2"),gl.count("top3"),gl.count("top4"),gl.count("top5")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
     
     
     frame1.pack(fill="both",side="left")
@@ -847,22 +897,22 @@ def top4():
     
     frame3=tk.Frame(choice7,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["top1","top2","top3","top4","top5"]
-    strength=[gl.count("top1"),gl.count("top2"),gl.count("top3"),gl.count("top4"),gl.count("top5")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["top1","top2","top3","top4","top5"]
+    # strength=[gl.count("top1"),gl.count("top2"),gl.count("top3"),gl.count("top4"),gl.count("top5")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
     
     
     frame1.pack(fill="both",side="left")
@@ -961,23 +1011,23 @@ def top5():
     
     frame3=tk.Frame(choice8,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
     
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["top1","top2","top3","top4","top5"]
-    strength=[gl.count("top1"),gl.count("top2"),gl.count("top3"),gl.count("top4"),gl.count("top5")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["top1","top2","top3","top4","top5"]
+    # strength=[gl.count("top1"),gl.count("top2"),gl.count("top3"),gl.count("top4"),gl.count("top5")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
     
     
     frame1.pack(fill="both",side="left")
@@ -1075,23 +1125,23 @@ def dress1():
     
     frame3=tk.Frame(choice9,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
 
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["dress1","dress2","dress3","dress4"]
-    strength=[gl.count("dress1"),gl.count("dress2"),gl.count("dress3"),gl.count("dress4")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["dress1","dress2","dress3","dress4"]
+    # strength=[gl.count("dress1"),gl.count("dress2"),gl.count("dress3"),gl.count("dress4")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
     
     
     frame1.pack(fill="both",side="left")
@@ -1191,22 +1241,22 @@ def dress2():
     
     frame3=tk.Frame(choice10,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["dress1","dress2","dress3","dress4"]
-    strength=[gl.count("dress1"),gl.count("dress2"),gl.count("dress3"),gl.count("dress4")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["dress1","dress2","dress3","dress4"]
+    # strength=[gl.count("dress1"),gl.count("dress2"),gl.count("dress3"),gl.count("dress4")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
     
     
     frame1.pack(fill="both",side="left")
@@ -1305,22 +1355,22 @@ def dress3():
     
     frame3=tk.Frame(choice11,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["dress1","dress2","dress3","dress4"]
-    strength=[gl.count("dress1"),gl.count("dress2"),gl.count("dress3"),gl.count("dress4")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["dress1","dress2","dress3","dress4"]
+    # strength=[gl.count("dress1"),gl.count("dress2"),gl.count("dress3"),gl.count("dress4")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
     
     
     frame1.pack(fill="both",side="left")
@@ -1420,22 +1470,22 @@ def dress4():
     
     frame3=tk.Frame(choice12,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["dress1","dress2","dress3","dress4"]
-    strength=[gl.count("dress1"),gl.count("dress2"),gl.count("dress3"),gl.count("dress4")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["dress1","dress2","dress3","dress4"]
+    # strength=[gl.count("dress1"),gl.count("dress2"),gl.count("dress3"),gl.count("dress4")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
     
     
     frame1.pack(fill="both",side="left")
@@ -1534,22 +1584,22 @@ def jeans1():
     
     frame3=tk.Frame(choice15,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["jeans1","jeans2","jeans3","jeans4"]
-    strength=[gl.count("jeans1"),gl.count("jeans2"),gl.count("jeans3"),gl.count("jeans4")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["jeans1","jeans2","jeans3","jeans4"]
+    # strength=[gl.count("jeans1"),gl.count("jeans2"),gl.count("jeans3"),gl.count("jeans4")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
     
     
     frame1.pack(fill="both",side="left")
@@ -1649,22 +1699,22 @@ def jeans2():
     
     frame3=tk.Frame(choice16,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["jeans1","jeans2","jeans3","jeans4"]
-    strength=[gl.count("jeans1"),gl.count("jeans2"),gl.count("jeans3"),gl.count("jeans4")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["jeans1","jeans2","jeans3","jeans4"]
+    # strength=[gl.count("jeans1"),gl.count("jeans2"),gl.count("jeans3"),gl.count("jeans4")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
     
     
     frame1.pack(fill="both",side="left")
@@ -1766,22 +1816,22 @@ def jeans3():
     
     frame3=tk.Frame(choice17,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["jeans1","jeans2","jeans3","jeans4"]
-    strength=[gl.count("jeans1"),gl.count("jeans2"),gl.count("jeans3"),gl.count("jeans4")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["jeans1","jeans2","jeans3","jeans4"]
+    # strength=[gl.count("jeans1"),gl.count("jeans2"),gl.count("jeans3"),gl.count("jeans4")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
     
     
     frame1.pack(fill="both",side="left")
@@ -1881,22 +1931,22 @@ def jeans4():
     
     frame3=tk.Frame(choice19,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["jeans1","jeans2","jeans3","jeans4"]
-    strength=[gl.count("jeans1"),gl.count("jeans2"),gl.count("jeans3"),gl.count("jeans4")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["jeans1","jeans2","jeans3","jeans4"]
+    # strength=[gl.count("jeans1"),gl.count("jeans2"),gl.count("jeans3"),gl.count("jeans4")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
     
     
     frame1.pack(fill="both",side="left")
@@ -2122,22 +2172,22 @@ def kurta1():
     
     frame3=tk.Frame(k,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["kurta1","kurta2","kurta3","kurta4"]
-    strength=[gl.count("kurta1"),gl.count("kurta2"),gl.count("kurta3"),gl.count("kurta4")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["kurta1","kurta2","kurta3","kurta4"]
+    # strength=[gl.count("kurta1"),gl.count("kurta2"),gl.count("kurta3"),gl.count("kurta4")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
     
     
     frame1.pack(fill="both",side="left")
@@ -2235,22 +2285,22 @@ def kurta2():
     
     frame3=tk.Frame(k1,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["kurta1","kurta2","kurta3","kurta4"]
-    strength=[gl.count("kurta1"),gl.count("kurta2"),gl.count("kurta3"),gl.count("kurta4")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["kurta1","kurta2","kurta3","kurta4"]
+    # strength=[gl.count("kurta1"),gl.count("kurta2"),gl.count("kurta3"),gl.count("kurta4")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
     
     
     frame1.pack(fill="both",side="left")
@@ -2352,22 +2402,22 @@ def kurta3():
     
     frame3=tk.Frame(k2,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["kurta1","kurta2","kurta3","kurta4"]
-    strength=[gl.count("kurta1"),gl.count("kurta2"),gl.count("kurta3"),gl.count("kurta4")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["kurta1","kurta2","kurta3","kurta4"]
+    # strength=[gl.count("kurta1"),gl.count("kurta2"),gl.count("kurta3"),gl.count("kurta4")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
     
     
     frame1.pack(fill="both",side="left")
@@ -2465,22 +2515,22 @@ def kurta4():
     
     frame3=tk.Frame(k3,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["kurta1","kurta2","kurta3","kurta4"]
-    strength=[gl.count("kurta1"),gl.count("kurta2"),gl.count("kurta3"),gl.count("kurta4")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["kurta1","kurta2","kurta3","kurta4"]
+    # strength=[gl.count("kurta1"),gl.count("kurta2"),gl.count("kurta3"),gl.count("kurta4")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
     
     
     frame1.pack(fill="both",side="left")
@@ -2580,22 +2630,22 @@ def lehenga1():
     
     frame3=tk.Frame(l1,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["lehenga1","lehenga2","saree1","saree2"]
-    strength=[gl.count("lehenga1"),gl.count("lehenga2"),gl.count("saree1"),gl.count("saree2")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["lehenga1","lehenga2","saree1","saree2"]
+    # strength=[gl.count("lehenga1"),gl.count("lehenga2"),gl.count("saree1"),gl.count("saree2")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
     
     
     frame1.pack(fill="both",side="left")
@@ -2697,22 +2747,22 @@ def lehenga2():
     
     frame3=tk.Frame(l2,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["lehenga1","lehenga2","saree1","saree2"]
-    strength=[gl.count("lehenga1"),gl.count("lehenga2"),gl.count("saree1"),gl.count("saree2")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["lehenga1","lehenga2","saree1","saree2"]
+    # strength=[gl.count("lehenga1"),gl.count("lehenga2"),gl.count("saree1"),gl.count("saree2")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
 
 
     
@@ -2812,22 +2862,22 @@ def saree1():
     
     frame3=tk.Frame(s1,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["lehenga1","lehenga2","saree1","saree2"]
-    strength=[gl.count("lehenga1"),gl.count("lehenga2"),gl.count("saree1"),gl.count("saree2")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["lehenga1","lehenga2","saree1","saree2"]
+    # strength=[gl.count("lehenga1"),gl.count("lehenga2"),gl.count("saree1"),gl.count("saree2")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
     
     
     frame1.pack(fill="both",side="left")
@@ -2930,22 +2980,22 @@ def saree2():
     
     frame3=tk.Frame(s2,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["lehenga1","lehenga2","saree1","saree2"]
-    strength=[gl.count("lehenga1"),gl.count("lehenga2"),gl.count("saree1"),gl.count("saree2")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["lehenga1","lehenga2","saree1","saree2"]
+    # strength=[gl.count("lehenga1"),gl.count("lehenga2"),gl.count("saree1"),gl.count("saree2")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
     
     
     frame1.pack(fill="both",side="left")
@@ -3122,22 +3172,22 @@ def shirt1():
     
     frame3=tk.Frame(upper,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["shirt1","shirt2","shirt3","shirt4"]
-    strength=[gl.count("shirt1"),gl.count("shirt2"),gl.count("shirt3"),gl.count("shirt4")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["shirt1","shirt2","shirt3","shirt4"]
+    # strength=[gl.count("shirt1"),gl.count("shirt2"),gl.count("shirt3"),gl.count("shirt4")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
     
     
     frame1.pack(fill="both",side="left")
@@ -3237,22 +3287,22 @@ def shirt2():
     
     frame3=tk.Frame(uppe,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["shirt1","shirt2","shirt3","shirt4"]
-    strength=[gl.count("shirt1"),gl.count("shirt2"),gl.count("shirt3"),gl.count("shirt4")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["shirt1","shirt2","shirt3","shirt4"]
+    # strength=[gl.count("shirt1"),gl.count("shirt2"),gl.count("shirt3"),gl.count("shirt4")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
     
     
     frame1.pack(fill="both",side="left")
@@ -3353,22 +3403,22 @@ def shirt3():
     
     frame3=tk.Frame(upp,height=500,width=500)
     
-    query="SELECT * FROM products WHERE CATEGORY=%s"
-    value=category
-    cursor.execute(query,value)
-    connection.commit()
-    result=cursor.fetchall()
+    # query="SELECT * FROM products WHERE CATEGORY=%s"
+    # value=category
+    # cursor.execute(query,value)
+    # connection.commit()
+    # result=cursor.fetchall()
     
-    for i in range(len(result)):
-        gl.append(result[i]['itemname'])
+    # for i in range(len(result)):
+    #     gl.append(result[i]['itemname'])
 
     
-    xaxis=["shirt1","shirt2","shirt3","shirt4"]
-    strength=[gl.count("shirt1"),gl.count("shirt2"),gl.count("shirt3"),gl.count("shirt4")]
-    fig = plt.figure(figsize =(10,7)) 
-    plt.pie(strength, labels = xaxis)
-    chart=FigureCanvasTkAgg(fig,frame3)
-    chart.get_tk_widget().pack()
+    # xaxis=["shirt1","shirt2","shirt3","shirt4"]
+    # strength=[gl.count("shirt1"),gl.count("shirt2"),gl.count("shirt3"),gl.count("shirt4")]
+    # fig = plt.figure(figsize =(10,7)) 
+    # plt.pie(strength, labels = xaxis)
+    # chart=FigureCanvasTkAgg(fig,frame3)
+    # chart.get_tk_widget().pack()
     
     
     frame1.pack(fill="both",side="left")
