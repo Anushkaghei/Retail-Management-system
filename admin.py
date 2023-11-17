@@ -1,15 +1,14 @@
 import tkinter as tk
 from tkinter import ttk
-import pymysql
 
 class OnlineShoppingAdminGUI:
-    def __init__(self, root):
+    def __init__(self, root,connection,cursor):
         self.root = root
         self.root.title("Online Shopping Admin Panel")
 
         # MySQL Connection
-        self.db = pymysql.connect(host="localhost", user="root", password="Gobbles#77", database="shopping")
-        self.cursor = self.db.cursor()
+        self.db = connection
+        self.cursor = cursor
 
         # Fetch available tables
         self.cursor.execute("SHOW TABLES")
@@ -163,5 +162,5 @@ class OnlineShoppingAdminGUI:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = OnlineShoppingAdminGUI(root)
+    app = OnlineShoppingAdminGUI(root,connection,cursor)
     root.mainloop()
